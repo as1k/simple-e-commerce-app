@@ -1,38 +1,62 @@
 package com.example.e_commerce_app
 
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
+import android.util.Log.d
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var navView: NavigationView
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-    }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout,
+                MainFragment()
+            )
+            .commit()
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+        navView.setNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.action_home -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frame_layout, MainFragment())
+                        .commit()
+                    d("tag", "menuItem 1 was pressed")
+                }
+                R.id.action_jeans -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frame_layout, JeansFragment())
+                        .commit()
+                    d("tag", "menuItem 2 was pressed")
+                }
+                R.id.action_settings3 -> d("tag", "menuItem 3 was pressed")
+                R.id.action_settings4 -> d("tag", "menuItem 4 was pressed")
+                R.id.action_settings5 -> d("tag", "menuItem 5 was pressed")
+            }
+            it.isChecked = true
+            drawerLayout.closeDrawers()
+            true
+        }
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+        drawerLayout.openDrawer(GravityCompat.START)
+        return true
     }
 }
